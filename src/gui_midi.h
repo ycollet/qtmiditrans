@@ -22,35 +22,31 @@
 #define GUI_MIDI_H
 
 #include <QtGui>
-#include <vector>
+#include <QMap>
 
 class Gui_Midi : public QMainWindow
 {
   Q_OBJECT
 
  public:
+  enum button_type {Play, Stop, Rewind, Forward, Backward};
+  
   Gui_Midi(QMainWindow * parent = 0);
   void buildDialog(QMainWindow * parent);
   
   bool load_config_file(QString fileName);
   bool save_config_file(QString fileName) const;
   
-  int getJTransStartType() const;
-  int getJTransStartChan() const;
-  int getJTransStartPitch() const;
-  int getJTransStopType() const;
-  int getJTransStopChan() const;
-  int getJTransStopPitch() const;
+  int getJTransType(button_type btype) const;
+  int getJTransChan(button_type btype) const;
+  int getJTransPitch(button_type btype) const;
   
-  void setJTransStartType(int val);
-  void setJTransStartChan(int val);
-  void setJTransStartPitch(int val);
-  void setJTransStopType(int val);
-  void setJTransStopChan(int val);
-  void setJTransStopPitch(int val);
+  void setJTransType(button_type btype, int val);
+  void setJTransChan(button_type btype, int val);
+  void setJTransPitch(button_type btype, int val);
 
-  bool isStartLearnMode() const;
-  bool isStopLearnMode() const;
+  bool isLearnMode(button_type btype) const;
+  
   void setLearnType(int);
   void setLearnChan(int);
   void setLearnPitch(int);
@@ -58,20 +54,36 @@ class Gui_Midi : public QMainWindow
   int getLearnChan() const;
   int getLearnPitch() const;
   
+  float getSkipAccel() const;
+  void setSkipAccel(float val);
+  
  private slots:
   void open_File();
   void save_File();
   int  about_dialog();
   
-  void startTypeChanged();
-  void startChanChanged();
-  void startPitchChanged();
+  void playTypeChanged();
+  void playChanChanged();
+  void playPitchChanged();
   void stopTypeChanged();
   void stopChanChanged();
   void stopPitchChanged();
+  void rewindTypeChanged();
+  void rewindChanChanged();
+  void rewindPitchChanged();
+  void forwardTypeChanged();
+  void forwardChanChanged();
+  void forwardPitchChanged();
+  void backwardTypeChanged();
+  void backwardChanChanged();
+  void backwardPitchChanged();
+  void skipAccelChanged();
   
-  void startLearnChanged();
+  void playLearnChanged();
   void stopLearnChanged();
+  void rewindLearnChanged();
+  void forwardLearnChanged();
+  void backwardLearnChanged();
   
  private:
   QMenu   *fileMenu;
@@ -81,25 +93,22 @@ class Gui_Midi : public QMainWindow
   QAction *exitAction;
   QAction *aboutAction;
   
-  QLineEdit* startTypeLE;
-  QLineEdit* startChanLE;
-  QLineEdit* startPitchLE;
-  QLineEdit* stopTypeLE;
-  QLineEdit* stopChanLE;
-  QLineEdit* stopPitchLE;
+  QMap<button_type, QLineEdit*> TypeLE;
+  QMap<button_type, QLineEdit*> ChanLE;
+  QMap<button_type, QLineEdit*> PitchLE;
+  QLineEdit* SkipAccelLE;
   
-  int jtrans_start_type;
-  int jtrans_start_chan;
-  int jtrans_start_pitch;
-  int jtrans_stop_type;
-  int jtrans_stop_chan;
-  int jtrans_stop_pitch;
+  QMap<button_type, int> jtrans_type;
+  QMap<button_type, int> jtrans_chan;
+  QMap<button_type, int> jtrans_pitch;
   
-  bool start_learn_mode;
-  bool stop_learn_mode;
+  QMap<button_type, bool> learn_mode;
+  
   int learn_type;
   int learn_chan;
   int learn_pitch;
+
+  float skipAccel;
 };
 
 #endif

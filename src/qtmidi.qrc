@@ -1,6 +1,11 @@
 <RCC>
     <qresource prefix="/images">
         <file alias="MainIcon">../img/icon.png</file>
+        <file alias="Play">../img/play.png</file>
+        <file alias="Stop">../img/stop.png</file>
+        <file alias="Rewind">../img/rewind.png</file>
+        <file alias="Forward">../img/forward.png</file>
+        <file alias="Backward">../img/backward.png</file>
     </qresource>
     <qresource prefix="/docs">
         <file alias="main_html_doc">../doc/qtjmix_doc.html</file>

@@ -57,19 +57,41 @@ int qtmidi_process(jack_nframes_t nframes, void *arg)
   void* buffer;
   jack_nframes_t N, i;
   Gui_Midi * ptrGuiMidi = (Gui_Midi *)arg;
-  int jtrans_stop_type  = 0,  jtrans_stop_chan  = 0,  jtrans_stop_pitch  = -1;
-  int jtrans_start_type = 0,  jtrans_start_chan = 0,  jtrans_start_pitch = -1;
-  int midi_event_type   = 0,  midi_event_chan   = 0,  midi_event_pitch   = -1;
+  int jtrans_stop_type     = 0, jtrans_stop_chan     = 0, jtrans_stop_pitch     = -1;
+  int jtrans_play_type     = 0, jtrans_play_chan     = 0, jtrans_play_pitch     = -1;
+  int jtrans_rewind_type   = 0, jtrans_rewind_chan   = 0, jtrans_rewind_pitch   = -1;
+  int jtrans_forward_type  = 0, jtrans_forward_chan  = 0, jtrans_forward_pitch  = -1;
+  int jtrans_backward_type = 0, jtrans_backward_chan = 0, jtrans_backward_pitch = -1;
+  int midi_event_type      = 0,  midi_event_chan     = 0,  midi_event_pitch     = -1;
   bool learn_mode = false;
+  float skip_accel = 1.1;
+  jack_position_t tpos;
+  float rate = 1.0;
+  float tloc = 0.0;
   
-  jtrans_start_type  = ptrGuiMidi->getJTransStartType();
-  jtrans_start_chan  = ptrGuiMidi->getJTransStartChan();
-  jtrans_start_pitch = ptrGuiMidi->getJTransStartPitch();
-  jtrans_stop_type   = ptrGuiMidi->getJTransStopType();
-  jtrans_stop_chan   = ptrGuiMidi->getJTransStopChan();
-  jtrans_stop_pitch  = ptrGuiMidi->getJTransStopPitch();
+  jtrans_play_type       = ptrGuiMidi->getJTransType(Gui_Midi::Play);
+  jtrans_play_chan       = ptrGuiMidi->getJTransChan(Gui_Midi::Play);
+  jtrans_play_pitch      = ptrGuiMidi->getJTransPitch(Gui_Midi::Play);
+  jtrans_stop_type       = ptrGuiMidi->getJTransType(Gui_Midi::Stop);
+  jtrans_stop_chan       = ptrGuiMidi->getJTransChan(Gui_Midi::Stop);
+  jtrans_stop_pitch      = ptrGuiMidi->getJTransPitch(Gui_Midi::Stop);
+  jtrans_rewind_type     = ptrGuiMidi->getJTransType(Gui_Midi::Rewind);
+  jtrans_rewind_chan     = ptrGuiMidi->getJTransChan(Gui_Midi::Rewind);
+  jtrans_rewind_pitch    = ptrGuiMidi->getJTransPitch(Gui_Midi::Rewind);
+  jtrans_forward_type    = ptrGuiMidi->getJTransType(Gui_Midi::Forward);
+  jtrans_forward_chan    = ptrGuiMidi->getJTransChan(Gui_Midi::Forward);
+  jtrans_forward_pitch   = ptrGuiMidi->getJTransPitch(Gui_Midi::Forward);
+  jtrans_backward_type   = ptrGuiMidi->getJTransType(Gui_Midi::Backward);
+  jtrans_backward_chan   = ptrGuiMidi->getJTransChan(Gui_Midi::Backward);
+  jtrans_backward_pitch  = ptrGuiMidi->getJTransPitch(Gui_Midi::Backward);
   
-  learn_mode = ptrGuiMidi->isStartLearnMode() || ptrGuiMidi->isStopLearnMode();
+  skip_accel = ptrGuiMidi->getSkipAccel();
+  
+  learn_mode = ptrGuiMidi->isLearnMode(Gui_Midi::Play) || 
+    ptrGuiMidi->isLearnMode(Gui_Midi::Stop) ||
+    ptrGuiMidi->isLearnMode(Gui_Midi::Rewind) ||
+    ptrGuiMidi->isLearnMode(Gui_Midi::Forward) ||
+    ptrGuiMidi->isLearnMode(Gui_Midi::Backward);
   
   buffer = jack_port_get_buffer(port, nframes);
   assert(buffer);
@@ -106,9 +128,9 @@ int qtmidi_process(jack_nframes_t nframes, void *arg)
 	      ptrGuiMidi->setLearnPitch(midi_event_pitch);
 	    }
 	  
-	  if ((midi_event_type==jtrans_start_type) &&
-	      (midi_event_chan==jtrans_start_chan) &&
-	      (midi_event_pitch==jtrans_start_pitch))
+	  if ((midi_event_type==jtrans_play_type) &&
+	      (midi_event_chan==jtrans_play_chan) &&
+	      (midi_event_pitch==jtrans_play_pitch))
 	    {
 	      jack_transport_start(client);
 	    }
@@ -117,6 +139,34 @@ int qtmidi_process(jack_nframes_t nframes, void *arg)
 		   (midi_event_pitch==jtrans_stop_pitch))
 	    {
 	      jack_transport_stop(client);
+	    }
+	  else if ((midi_event_type==jtrans_rewind_type) &&
+		   (midi_event_chan==jtrans_rewind_chan) &&
+		   (midi_event_pitch==jtrans_rewind_pitch))
+	    {
+	      jack_transport_locate(client, 0);
+	    }
+	  else if ((midi_event_type==jtrans_forward_type) &&
+		   (midi_event_chan==jtrans_forward_chan) &&
+		   (midi_event_pitch==jtrans_forward_pitch))
+	    {
+	      jack_position_t tpos;
+	      jack_transport_query(client, &tpos);
+	      float rate = float(tpos.frame_rate);
+	      float tloc = ((float(tpos.frame) / rate) + skip_accel) * rate;
+	      if (tloc < 0.0f) tloc = 0.0f;
+	      jack_transport_locate(client, (jack_nframes_t) tloc);
+	    }
+	  else if ((midi_event_type==jtrans_backward_type) &&
+		   (midi_event_chan==jtrans_backward_chan) &&
+		   (midi_event_pitch==jtrans_backward_pitch))
+	    {
+	      jack_position_t tpos;
+	      jack_transport_query(client, &tpos);
+	      float rate = float(tpos.frame_rate);
+	      float tloc = ((float(tpos.frame) / rate) - skip_accel) * rate;
+	      if (tloc < 0.0f) tloc = 0.0f;
+	      jack_transport_locate(client, (jack_nframes_t) tloc);
 	    }
 	}
     }
