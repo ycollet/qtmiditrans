@@ -28,10 +28,10 @@
 #include "gui_midi.h"
 #include "help_dialog.h"
 
-#define CONVERT_ERROR(x)						\
-  if (x)								\
+#define CONVERT_ERROR(x, message)					\
+  if (!x)								\
     {									\
-      std::cerr << qPrintable(QT_TRANSLATE_NOOP("gui_midi", "Error while reading the configuration file.")) << std::endl; \
+      std::cerr << qPrintable(QT_TRANSLATE_NOOP("gui_midi", "Error while reading the configuration file.")) << " " << message << std::endl; \
       return false;							\
     }
 
@@ -552,52 +552,67 @@ bool Gui_Midi::load_config_file(QString fileName)
   QTextStream in(&file);
   
   line = in.readLine(); fields = line.split(' ');
-  jtrans_type[Play] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_type[Play] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "play:type");
+  TypeLE[Play]->setText(QString::number(jtrans_type[Play]));
+    
+  line = in.readLine(); fields = line.split(' ');
+  jtrans_chan[Play] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "play:chan");
+  ChanLE[Play]->setText(QString::number(jtrans_chan[Play]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_chan[Play] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_pitch[Play] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "play:pitch");
+  PitchLE[Play]->setText(QString::number(jtrans_pitch[Play]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_pitch[Play] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_type[Stop] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "stop:type");
+  TypeLE[Stop]->setText(QString::number(jtrans_type[Stop]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_type[Stop] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_chan[Stop] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "stop:chan");
+  ChanLE[Stop]->setText(QString::number(jtrans_chan[Stop]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_chan[Stop] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
-
-  line = in.readLine(); fields = line.split(' ');
-  jtrans_pitch[Stop] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_pitch[Stop] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "stop:pitch");
+  PitchLE[Stop]->setText(QString::number(jtrans_pitch[Stop]));
   
   line = in.readLine(); fields = line.split(' ');
-  jtrans_type[Rewind] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_type[Rewind] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "rewind:type");
+  TypeLE[Rewind]->setText(QString::number(jtrans_type[Rewind]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_chan[Rewind] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_chan[Rewind] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "rewind:chan");
+  ChanLE[Rewind]->setText(QString::number(jtrans_chan[Rewind]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_pitch[Rewind] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_pitch[Rewind] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "rewind:pitch");
+  PitchLE[Rewind]->setText(QString::number(jtrans_pitch[Rewind]));
   
   line = in.readLine(); fields = line.split(' ');
-  jtrans_type[Forward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_type[Forward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "forward:type");
+  TypeLE[Forward]->setText(QString::number(jtrans_type[Forward]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_chan[Forward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_chan[Forward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "forward:chan");
+  ChanLE[Forward]->setText(QString::number(jtrans_chan[Forward]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_pitch[Forward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_pitch[Forward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "forward:pitch");
+  PitchLE[Forward]->setText(QString::number(jtrans_pitch[Forward]));
   
   line = in.readLine(); fields = line.split(' ');
-  jtrans_type[Backward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_type[Backward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "backward:type");
+  TypeLE[Backward]->setText(QString::number(jtrans_type[Backward]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_chan[Backward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_chan[Backward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "backward:chan");
+  ChanLE[Backward]->setText(QString::number(jtrans_chan[Backward]));
 
   line = in.readLine(); fields = line.split(' ');
-  jtrans_pitch[Backward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result);
+  jtrans_pitch[Backward] = fields.at(1).toInt(&convert_result); CONVERT_ERROR(convert_result, "backward:pitch");
+  PitchLE[Backward]->setText(QString::number(jtrans_pitch[Backward]));
   
   line = in.readLine(); fields = line.split(' ');
-  skipAccel = fields.at(1).toFloat(&convert_result); CONVERT_ERROR(convert_result);
+  skipAccel = fields.at(1).toFloat(&convert_result); CONVERT_ERROR(convert_result, "skipAccel");
   
   file.close();
 }
