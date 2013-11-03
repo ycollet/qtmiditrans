@@ -21,6 +21,8 @@
 #include <QtGui>
 #include <QtWebKit/QWebView>
 #include <QMap>
+#include <QIntValidator>
+#include <QDoubleValidator>
 
 #include <sstream>
 #include <iostream>
@@ -134,22 +136,73 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QLabel* backwardPitchLabel = new QLabel(tr("Pitch Type:"), parent);
   QLabel* skipAccelLabel     = new QLabel(tr("Forward / Backward speed:"), parent);
 
-  TypeLE[Play]      = new QLineEdit(parent); TypeLE[Play]->setText(QString::number(jtrans_type[Play]));
-  ChanLE[Play]      = new QLineEdit(parent); ChanLE[Play]->setText(QString::number(jtrans_chan[Play]));
-  PitchLE[Play]     = new QLineEdit(parent); PitchLE[Play]->setText(QString::number(jtrans_pitch[Play]));
-  TypeLE[Stop]      = new QLineEdit(parent); TypeLE[Stop]->setText(QString::number(jtrans_type[Stop]));
-  ChanLE[Stop]      = new QLineEdit(parent); ChanLE[Stop]->setText(QString::number(jtrans_chan[Stop]));
-  PitchLE[Stop]     = new QLineEdit(parent); PitchLE[Stop]->setText(QString::number(jtrans_pitch[Stop]));
-  TypeLE[Rewind]    = new QLineEdit(parent); TypeLE[Rewind]->setText(QString::number(jtrans_type[Rewind]));
-  ChanLE[Rewind]    = new QLineEdit(parent); ChanLE[Rewind]->setText(QString::number(jtrans_chan[Rewind]));
-  PitchLE[Rewind]   = new QLineEdit(parent); PitchLE[Rewind]->setText(QString::number(jtrans_pitch[Rewind]));
-  TypeLE[Forward]   = new QLineEdit(parent); TypeLE[Forward]->setText(QString::number(jtrans_type[Forward]));
-  ChanLE[Forward]   = new QLineEdit(parent); ChanLE[Forward]->setText(QString::number(jtrans_chan[Forward]));
-  PitchLE[Forward]  = new QLineEdit(parent); PitchLE[Forward]->setText(QString::number(jtrans_pitch[Forward]));
-  TypeLE[Backward]  = new QLineEdit(parent); TypeLE[Backward]->setText(QString::number(jtrans_type[Backward]));
-  ChanLE[Backward]  = new QLineEdit(parent); ChanLE[Backward]->setText(QString::number(jtrans_chan[Backward]));
-  PitchLE[Backward] = new QLineEdit(parent); PitchLE[Backward]->setText(QString::number(jtrans_pitch[Backward]));
-  SkipAccelLE       = new QLineEdit(parent); SkipAccelLE->setText(QString::number(skipAccel));
+  QValidator *midiValidator = new QIntValidator(0, 127, this);
+  
+  TypeLE[Play] = new QLineEdit(parent); 
+  TypeLE[Play]->setText(QString::number(jtrans_type[Play]));
+  TypeLE[Play]->setValidator(midiValidator);
+    
+  ChanLE[Play] = new QLineEdit(parent); 
+  ChanLE[Play]->setText(QString::number(jtrans_chan[Play]));
+  ChanLE[Play]->setValidator(midiValidator);
+  
+  PitchLE[Play] = new QLineEdit(parent); 
+  PitchLE[Play]->setText(QString::number(jtrans_pitch[Play]));
+  PitchLE[Play]->setValidator(midiValidator);
+  
+  TypeLE[Stop] = new QLineEdit(parent); 
+  TypeLE[Stop]->setText(QString::number(jtrans_type[Stop]));
+  TypeLE[Stop]->setValidator(midiValidator);
+  
+  ChanLE[Stop] = new QLineEdit(parent); 
+  ChanLE[Stop]->setText(QString::number(jtrans_chan[Stop]));
+  ChanLE[Stop]->setValidator(midiValidator);
+  
+  PitchLE[Stop] = new QLineEdit(parent); 
+  PitchLE[Stop]->setText(QString::number(jtrans_pitch[Stop]));
+  PitchLE[Stop]->setValidator(midiValidator);
+  
+  TypeLE[Rewind] = new QLineEdit(parent); 
+  TypeLE[Rewind]->setText(QString::number(jtrans_type[Rewind]));
+  TypeLE[Rewind]->setValidator(midiValidator);
+  
+  ChanLE[Rewind] = new QLineEdit(parent); 
+  ChanLE[Rewind]->setText(QString::number(jtrans_chan[Rewind]));
+  ChanLE[Rewind]->setValidator(midiValidator);
+  
+  PitchLE[Rewind] = new QLineEdit(parent); 
+  PitchLE[Rewind]->setText(QString::number(jtrans_pitch[Rewind]));
+  PitchLE[Rewind]->setValidator(midiValidator);
+  
+  TypeLE[Forward] = new QLineEdit(parent); 
+  TypeLE[Forward]->setText(QString::number(jtrans_type[Forward]));
+  TypeLE[Forward]->setValidator(midiValidator);
+  
+  ChanLE[Forward] = new QLineEdit(parent); 
+  ChanLE[Forward]->setText(QString::number(jtrans_chan[Forward]));
+  ChanLE[Forward]->setValidator(midiValidator);
+  
+  PitchLE[Forward] = new QLineEdit(parent); 
+  PitchLE[Forward]->setText(QString::number(jtrans_pitch[Forward]));
+  PitchLE[Forward]->setValidator(midiValidator);
+  
+  TypeLE[Backward] = new QLineEdit(parent); 
+  TypeLE[Backward]->setText(QString::number(jtrans_type[Backward]));
+  TypeLE[Backward]->setValidator(midiValidator);
+  
+  ChanLE[Backward] = new QLineEdit(parent); 
+  ChanLE[Backward]->setText(QString::number(jtrans_chan[Backward]));
+  ChanLE[Backward]->setValidator(midiValidator);
+  
+  PitchLE[Backward] = new QLineEdit(parent); 
+  PitchLE[Backward]->setText(QString::number(jtrans_pitch[Backward]));
+  PitchLE[Backward]->setValidator(midiValidator);
+  
+  
+  SkipAccelLE = new QLineEdit(parent); 
+  QValidator *floatValidator = new QDoubleValidator(1.0, 60.0, 4, this);
+  SkipAccelLE->setText(QString::number(skipAccel));
+  SkipAccelLE->setValidator(floatValidator);
   
   QPushButton* playTypeApply      = new QPushButton(tr("Apply"), parent);
   QPushButton* playChanApply      = new QPushButton(tr("Apply"), parent);

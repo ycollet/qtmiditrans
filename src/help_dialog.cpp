@@ -19,6 +19,7 @@
 //=============================================================================
 
 #include <QtWebKit>
+//#include <QDesktopServices>
 
 #include "help_dialog.h"
 
@@ -46,4 +47,6 @@ HelpDialog::HelpDialog(QWidget *parent) : QDialog(parent)
   this->setLayout(helpLayout);
 
   connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
+
+  //QDesktopServices::openUrl(QUrl("qrc:///docs/help.pdf"));
 }
