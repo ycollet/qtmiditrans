@@ -1,5 +1,6 @@
 Remove 2 of the 3 apply buttons in each tab. One is enough.
 Find a better value for skipAccel (maybe use a frame value).
+Use Ui designer
 Add a small pdf doc.
 Add in the doc how to compile the package.
 Add install rules.

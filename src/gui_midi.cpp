@@ -138,105 +138,118 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
 
   QValidator *midiValidator = new QIntValidator(0, 127, this);
   
+  // Get the size of a char
+  QFontMetrics metrics(playTypeLabel->font());
+  int pixelWidth = metrics.width(QString("0"));
+  
   TypeLE[Play] = new QLineEdit(parent); 
   TypeLE[Play]->setText(QString::number(jtrans_type[Play]));
+  TypeLE[Play]->setMaxLength(4);
+  TypeLE[Play]->setFixedWidth(6*pixelWidth);
   TypeLE[Play]->setValidator(midiValidator);
     
   ChanLE[Play] = new QLineEdit(parent); 
   ChanLE[Play]->setText(QString::number(jtrans_chan[Play]));
+  ChanLE[Play]->setMaxLength(4);
+  ChanLE[Play]->setFixedWidth(6*pixelWidth);
   ChanLE[Play]->setValidator(midiValidator);
   
   PitchLE[Play] = new QLineEdit(parent); 
   PitchLE[Play]->setText(QString::number(jtrans_pitch[Play]));
+  PitchLE[Play]->setMaxLength(4);
+  PitchLE[Play]->setFixedWidth(6*pixelWidth);
   PitchLE[Play]->setValidator(midiValidator);
   
   TypeLE[Stop] = new QLineEdit(parent); 
   TypeLE[Stop]->setText(QString::number(jtrans_type[Stop]));
+  TypeLE[Stop]->setMaxLength(4);
+  TypeLE[Stop]->setFixedWidth(6*pixelWidth);
   TypeLE[Stop]->setValidator(midiValidator);
   
   ChanLE[Stop] = new QLineEdit(parent); 
   ChanLE[Stop]->setText(QString::number(jtrans_chan[Stop]));
+  ChanLE[Stop]->setMaxLength(4);
+  ChanLE[Stop]->setFixedWidth(6*pixelWidth);
   ChanLE[Stop]->setValidator(midiValidator);
   
   PitchLE[Stop] = new QLineEdit(parent); 
   PitchLE[Stop]->setText(QString::number(jtrans_pitch[Stop]));
+  PitchLE[Stop]->setMaxLength(4);
+  PitchLE[Stop]->setFixedWidth(6*pixelWidth);
   PitchLE[Stop]->setValidator(midiValidator);
   
   TypeLE[Rewind] = new QLineEdit(parent); 
   TypeLE[Rewind]->setText(QString::number(jtrans_type[Rewind]));
+  TypeLE[Rewind]->setMaxLength(4);
+  TypeLE[Rewind]->setFixedWidth(6*pixelWidth);
   TypeLE[Rewind]->setValidator(midiValidator);
   
   ChanLE[Rewind] = new QLineEdit(parent); 
   ChanLE[Rewind]->setText(QString::number(jtrans_chan[Rewind]));
+  ChanLE[Rewind]->setMaxLength(4);
+  ChanLE[Rewind]->setFixedWidth(6*pixelWidth);
   ChanLE[Rewind]->setValidator(midiValidator);
   
   PitchLE[Rewind] = new QLineEdit(parent); 
   PitchLE[Rewind]->setText(QString::number(jtrans_pitch[Rewind]));
+  PitchLE[Rewind]->setMaxLength(4);
+  PitchLE[Rewind]->setFixedWidth(6*pixelWidth);
   PitchLE[Rewind]->setValidator(midiValidator);
   
   TypeLE[Forward] = new QLineEdit(parent); 
   TypeLE[Forward]->setText(QString::number(jtrans_type[Forward]));
+  TypeLE[Forward]->setMaxLength(4);
+  TypeLE[Forward]->setFixedWidth(6*pixelWidth);
   TypeLE[Forward]->setValidator(midiValidator);
   
   ChanLE[Forward] = new QLineEdit(parent); 
   ChanLE[Forward]->setText(QString::number(jtrans_chan[Forward]));
+  ChanLE[Forward]->setMaxLength(4);
+  ChanLE[Forward]->setFixedWidth(6*pixelWidth);
   ChanLE[Forward]->setValidator(midiValidator);
   
   PitchLE[Forward] = new QLineEdit(parent); 
   PitchLE[Forward]->setText(QString::number(jtrans_pitch[Forward]));
+  PitchLE[Forward]->setMaxLength(4);
+  PitchLE[Forward]->setFixedWidth(6*pixelWidth);
   PitchLE[Forward]->setValidator(midiValidator);
   
   TypeLE[Backward] = new QLineEdit(parent); 
   TypeLE[Backward]->setText(QString::number(jtrans_type[Backward]));
+  TypeLE[Backward]->setMaxLength(4);
+  TypeLE[Backward]->setFixedWidth(6*pixelWidth);
   TypeLE[Backward]->setValidator(midiValidator);
   
   ChanLE[Backward] = new QLineEdit(parent); 
   ChanLE[Backward]->setText(QString::number(jtrans_chan[Backward]));
+  ChanLE[Backward]->setMaxLength(4);
+  ChanLE[Backward]->setFixedWidth(6*pixelWidth);
   ChanLE[Backward]->setValidator(midiValidator);
   
   PitchLE[Backward] = new QLineEdit(parent); 
   PitchLE[Backward]->setText(QString::number(jtrans_pitch[Backward]));
+  PitchLE[Backward]->setMaxLength(4);
+  PitchLE[Backward]->setFixedWidth(6*pixelWidth);
   PitchLE[Backward]->setValidator(midiValidator);
-  
   
   SkipAccelLE = new QLineEdit(parent); 
   QValidator *floatValidator = new QDoubleValidator(1.0, 60.0, 4, this);
   SkipAccelLE->setText(QString::number(skipAccel));
   SkipAccelLE->setValidator(floatValidator);
   
-  QPushButton* playTypeApply      = new QPushButton(tr("Apply"), parent);
-  QPushButton* playChanApply      = new QPushButton(tr("Apply"), parent);
-  QPushButton* playPitchApply     = new QPushButton(tr("Apply"), parent);
-  QPushButton* stopTypeApply      = new QPushButton(tr("Apply"), parent);
-  QPushButton* stopChanApply      = new QPushButton(tr("Apply"), parent);
-  QPushButton* stopPitchApply     = new QPushButton(tr("Apply"), parent);
-  QPushButton* rewindTypeApply    = new QPushButton(tr("Apply"), parent);
-  QPushButton* rewindChanApply    = new QPushButton(tr("Apply"), parent);
-  QPushButton* rewindPitchApply   = new QPushButton(tr("Apply"), parent);
-  QPushButton* forwardTypeApply   = new QPushButton(tr("Apply"), parent);
-  QPushButton* forwardChanApply   = new QPushButton(tr("Apply"), parent);
-  QPushButton* forwardPitchApply  = new QPushButton(tr("Apply"), parent);
-  QPushButton* backwardTypeApply  = new QPushButton(tr("Apply"), parent);
-  QPushButton* backwardChanApply  = new QPushButton(tr("Apply"), parent);
-  QPushButton* backwardPitchApply = new QPushButton(tr("Apply"), parent);
-  QPushButton* skipAccelApply     = new QPushButton(tr("Apply"), parent);
+  QPushButton* playApply      = new QPushButton(tr("Apply"), parent);
+  QPushButton* stopApply      = new QPushButton(tr("Apply"), parent);
+  QPushButton* rewindApply    = new QPushButton(tr("Apply"), parent);
+  QPushButton* forwardApply   = new QPushButton(tr("Apply"), parent);
+  QPushButton* backwardApply  = new QPushButton(tr("Apply"), parent);
+  QPushButton* skipAccelApply = new QPushButton(tr("Apply"), parent);
 
-  connect(playTypeApply,      SIGNAL(clicked()), this, SLOT(playTypeChanged()));
-  connect(playChanApply,      SIGNAL(clicked()), this, SLOT(playChanChanged()));
-  connect(playPitchApply,     SIGNAL(clicked()), this, SLOT(playPitchChanged()));
-  connect(stopTypeApply,      SIGNAL(clicked()), this, SLOT(stopTypeChanged()));
-  connect(stopChanApply,      SIGNAL(clicked()), this, SLOT(stopChanChanged()));
-  connect(stopPitchApply,     SIGNAL(clicked()), this, SLOT(stopPitchChanged()));
-  connect(rewindTypeApply,    SIGNAL(clicked()), this, SLOT(rewindTypeChanged()));
-  connect(rewindChanApply,    SIGNAL(clicked()), this, SLOT(rewindChanChanged()));
-  connect(rewindPitchApply,   SIGNAL(clicked()), this, SLOT(rewindPitchChanged()));
-  connect(forwardTypeApply,   SIGNAL(clicked()), this, SLOT(forwardTypeChanged()));
-  connect(forwardChanApply,   SIGNAL(clicked()), this, SLOT(forwardChanChanged()));
-  connect(forwardPitchApply,  SIGNAL(clicked()), this, SLOT(forwardPitchChanged()));
-  connect(backwardTypeApply,  SIGNAL(clicked()), this, SLOT(backwardTypeChanged()));
-  connect(backwardChanApply,  SIGNAL(clicked()), this, SLOT(backwardChanChanged()));
-  connect(backwardPitchApply, SIGNAL(clicked()), this, SLOT(backwardPitchChanged()));
-  connect(skipAccelApply,     SIGNAL(clicked()), this, SLOT(skipAccelChanged()));
+  connect(playApply,      SIGNAL(clicked()), this, SLOT(playChanged()));
+  connect(stopApply,      SIGNAL(clicked()), this, SLOT(stopChanged()));
+  connect(rewindApply,    SIGNAL(clicked()), this, SLOT(rewindChanged()));
+  connect(forwardApply,   SIGNAL(clicked()), this, SLOT(forwardChanged()));
+  connect(backwardApply,  SIGNAL(clicked()), this, SLOT(backwardChanged()));
+  connect(skipAccelApply, SIGNAL(clicked()), this, SLOT(skipAccelChanged()));
   
   QPushButton* playLearnButton      = new QPushButton(tr("Learn"), parent);
   QPushButton* stopLearnButton      = new QPushButton(tr("Learn"), parent);
@@ -256,21 +269,19 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* playTypeWidget = new QWidget(parent);
   playTypeLayout->addWidget(playTypeLabel);
   playTypeLayout->addWidget(TypeLE[Play]);
-  playTypeLayout->addWidget(playTypeApply);
   playTypeWidget->setLayout(playTypeLayout);
 
   QHBoxLayout* playChanLayout = new QHBoxLayout(parent);
   QWidget* playChanWidget = new QWidget(parent);
   playChanLayout->addWidget(playChanLabel);
   playChanLayout->addWidget(ChanLE[Play]);
-  playChanLayout->addWidget(playChanApply);
+  playChanLayout->addWidget(playApply);
   playChanWidget->setLayout(playChanLayout);
 
   QHBoxLayout* playPitchLayout = new QHBoxLayout(parent);
   QWidget* playPitchWidget = new QWidget(parent);
   playPitchLayout->addWidget(playPitchLabel);
   playPitchLayout->addWidget(PitchLE[Play]);
-  playPitchLayout->addWidget(playPitchApply);
   playPitchWidget->setLayout(playPitchLayout);
   
   // Stop part
@@ -279,21 +290,19 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* stopTypeWidget = new QWidget(parent);
   stopTypeLayout->addWidget(stopTypeLabel);
   stopTypeLayout->addWidget(TypeLE[Stop]);
-  stopTypeLayout->addWidget(stopTypeApply);
   stopTypeWidget->setLayout(stopTypeLayout);
 
   QHBoxLayout* stopChanLayout = new QHBoxLayout(parent);
   QWidget* stopChanWidget = new QWidget(parent);
   stopChanLayout->addWidget(stopChanLabel);
   stopChanLayout->addWidget(ChanLE[Stop]);
-  stopChanLayout->addWidget(stopChanApply);
+  stopChanLayout->addWidget(stopApply);
   stopChanWidget->setLayout(stopChanLayout);
 
   QHBoxLayout* stopPitchLayout = new QHBoxLayout(parent);
   QWidget* stopPitchWidget = new QWidget(parent);
   stopPitchLayout->addWidget(stopPitchLabel);
   stopPitchLayout->addWidget(PitchLE[Stop]);
-  stopPitchLayout->addWidget(stopPitchApply);
   stopPitchWidget->setLayout(stopPitchLayout);
 
   // Rewind part
@@ -302,21 +311,19 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* rewindTypeWidget = new QWidget(parent);
   rewindTypeLayout->addWidget(rewindTypeLabel);
   rewindTypeLayout->addWidget(TypeLE[Rewind]);
-  rewindTypeLayout->addWidget(rewindTypeApply);
   rewindTypeWidget->setLayout(rewindTypeLayout);
 
   QHBoxLayout* rewindChanLayout = new QHBoxLayout(parent);
   QWidget* rewindChanWidget = new QWidget(parent);
   rewindChanLayout->addWidget(rewindChanLabel);
   rewindChanLayout->addWidget(ChanLE[Rewind]);
-  rewindChanLayout->addWidget(rewindChanApply);
+  rewindChanLayout->addWidget(rewindApply);
   rewindChanWidget->setLayout(rewindChanLayout);
 
   QHBoxLayout* rewindPitchLayout = new QHBoxLayout(parent);
   QWidget* rewindPitchWidget = new QWidget(parent);
   rewindPitchLayout->addWidget(rewindPitchLabel);
   rewindPitchLayout->addWidget(PitchLE[Rewind]);
-  rewindPitchLayout->addWidget(rewindPitchApply);
   rewindPitchWidget->setLayout(rewindPitchLayout);
   
   // Forward part
@@ -325,21 +332,19 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* forwardTypeWidget = new QWidget(parent);
   forwardTypeLayout->addWidget(forwardTypeLabel);
   forwardTypeLayout->addWidget(TypeLE[Forward]);
-  forwardTypeLayout->addWidget(forwardTypeApply);
   forwardTypeWidget->setLayout(forwardTypeLayout);
 
   QHBoxLayout* forwardChanLayout = new QHBoxLayout(parent);
   QWidget* forwardChanWidget = new QWidget(parent);
   forwardChanLayout->addWidget(forwardChanLabel);
   forwardChanLayout->addWidget(ChanLE[Forward]);
-  forwardChanLayout->addWidget(forwardChanApply);
+  forwardChanLayout->addWidget(forwardApply);
   forwardChanWidget->setLayout(forwardChanLayout);
 
   QHBoxLayout* forwardPitchLayout = new QHBoxLayout(parent);
   QWidget* forwardPitchWidget = new QWidget(parent);
   forwardPitchLayout->addWidget(forwardPitchLabel);
   forwardPitchLayout->addWidget(PitchLE[Forward]);
-  forwardPitchLayout->addWidget(forwardPitchApply);
   forwardPitchWidget->setLayout(forwardPitchLayout);
   
   // Backward part
@@ -348,21 +353,19 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* backwardTypeWidget = new QWidget(parent);
   backwardTypeLayout->addWidget(backwardTypeLabel);
   backwardTypeLayout->addWidget(TypeLE[Backward]);
-  backwardTypeLayout->addWidget(backwardTypeApply);
   backwardTypeWidget->setLayout(backwardTypeLayout);
 
   QHBoxLayout* backwardChanLayout = new QHBoxLayout(parent);
   QWidget* backwardChanWidget = new QWidget(parent);
   backwardChanLayout->addWidget(backwardChanLabel);
   backwardChanLayout->addWidget(ChanLE[Backward]);
-  backwardChanLayout->addWidget(backwardChanApply);
+  backwardChanLayout->addWidget(backwardApply);
   backwardChanWidget->setLayout(backwardChanLayout);
 
   QHBoxLayout* backwardPitchLayout = new QHBoxLayout(parent);
   QWidget* backwardPitchWidget = new QWidget(parent);
   backwardPitchLayout->addWidget(backwardPitchLabel);
   backwardPitchLayout->addWidget(PitchLE[Backward]);
-  backwardPitchLayout->addWidget(backwardPitchApply);
   backwardPitchWidget->setLayout(backwardPitchLayout);
 
   // Paremeters part
@@ -378,47 +381,47 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   
   QVBoxLayout *playLayout = new QVBoxLayout(parent);
   QWidget *playWidget = new QWidget(parent);
-  playLayout->addWidget(playTypeWidget);
-  playLayout->addWidget(playChanWidget);
-  playLayout->addWidget(playPitchWidget);
-  playLayout->addWidget(playLearnButton);
+  playLayout->addWidget(playTypeWidget, 0, Qt::AlignLeft);
+  playLayout->addWidget(playChanWidget, 0, Qt::AlignLeft);
+  playLayout->addWidget(playPitchWidget, 0, Qt::AlignLeft);
+  playLayout->addWidget(playLearnButton, 0, Qt::AlignLeft);
   playWidget->setLayout(playLayout);
   
   QVBoxLayout *stopLayout = new QVBoxLayout(parent);
   QWidget *stopWidget = new QWidget(parent);
-  stopLayout->addWidget(stopTypeWidget);
-  stopLayout->addWidget(stopChanWidget);
-  stopLayout->addWidget(stopPitchWidget);
-  stopLayout->addWidget(stopLearnButton);
+  stopLayout->addWidget(stopTypeWidget, 0, Qt::AlignLeft);
+  stopLayout->addWidget(stopChanWidget, 0, Qt::AlignLeft);
+  stopLayout->addWidget(stopPitchWidget, 0, Qt::AlignLeft);
+  stopLayout->addWidget(stopLearnButton, 0, Qt::AlignLeft);
   stopWidget->setLayout(stopLayout);
 
   QVBoxLayout *rewindLayout = new QVBoxLayout(parent);
   QWidget *rewindWidget = new QWidget(parent);
-  rewindLayout->addWidget(rewindTypeWidget);
-  rewindLayout->addWidget(rewindChanWidget);
-  rewindLayout->addWidget(rewindPitchWidget);
-  rewindLayout->addWidget(rewindLearnButton);
+  rewindLayout->addWidget(rewindTypeWidget, 0, Qt::AlignLeft);
+  rewindLayout->addWidget(rewindChanWidget, 0, Qt::AlignLeft);
+  rewindLayout->addWidget(rewindPitchWidget, 0, Qt::AlignLeft);
+  rewindLayout->addWidget(rewindLearnButton, 0, Qt::AlignLeft);
   rewindWidget->setLayout(rewindLayout);
   
   QVBoxLayout *forwardLayout = new QVBoxLayout(parent);
   QWidget *forwardWidget = new QWidget(parent);
-  forwardLayout->addWidget(forwardTypeWidget);
-  forwardLayout->addWidget(forwardChanWidget);
-  forwardLayout->addWidget(forwardPitchWidget);
-  forwardLayout->addWidget(forwardLearnButton);
+  forwardLayout->addWidget(forwardTypeWidget, 0, Qt::AlignLeft);
+  forwardLayout->addWidget(forwardChanWidget, 0, Qt::AlignLeft);
+  forwardLayout->addWidget(forwardPitchWidget, 0, Qt::AlignLeft);
+  forwardLayout->addWidget(forwardLearnButton, 0, Qt::AlignLeft);
   forwardWidget->setLayout(forwardLayout);
   
   QVBoxLayout *backwardLayout = new QVBoxLayout(parent);
   QWidget *backwardWidget = new QWidget(parent);
-  backwardLayout->addWidget(backwardTypeWidget);
-  backwardLayout->addWidget(backwardChanWidget);
-  backwardLayout->addWidget(backwardPitchWidget);
-  backwardLayout->addWidget(backwardLearnButton);
+  backwardLayout->addWidget(backwardTypeWidget, 0, Qt::AlignLeft);
+  backwardLayout->addWidget(backwardChanWidget, 0, Qt::AlignLeft);
+  backwardLayout->addWidget(backwardPitchWidget, 0, Qt::AlignLeft);
+  backwardLayout->addWidget(backwardLearnButton, 0, Qt::AlignLeft);
   backwardWidget->setLayout(backwardLayout);
 
   QVBoxLayout *parametersLayout = new QVBoxLayout(parent);
   QWidget *parametersWidget = new QWidget(parent);
-  parametersLayout->addWidget(skipAccelWidget);
+  parametersLayout->addWidget(skipAccelWidget, 0, Qt::AlignLeft);
   parametersWidget->setLayout(parametersLayout);
   
   QPushButton *exitButton = new QPushButton(tr("Exit"), parent);
@@ -453,93 +456,53 @@ int Gui_Midi::about_dialog()
   helpDialog->show();
 }
 
-void Gui_Midi::playTypeChanged()
+void Gui_Midi::playChanged()
 {
-  jtrans_type[Play] = TypeLE[Play]->text().toInt();
-  qDebug() << "DEBUG: jtrans_type[Play] = " << TypeLE[Play]->text();
-}
-
-void Gui_Midi::playChanChanged()
-{
-  jtrans_chan[Play] = ChanLE[Play]->text().toInt();
-  qDebug() << "DEBUG: jtrans_chan[Play] = " << ChanLE[Play]->text();
-}
-
-void Gui_Midi::playPitchChanged()
-{
+  jtrans_type[Play]  = TypeLE[Play]->text().toInt();
+  jtrans_chan[Play]  = ChanLE[Play]->text().toInt();
   jtrans_pitch[Play] = PitchLE[Play]->text().toInt();
+  qDebug() << "DEBUG: jtrans_type[Play]  = " << TypeLE[Play]->text();
+  qDebug() << "DEBUG: jtrans_chan[Play]  = " << ChanLE[Play]->text();
   qDebug() << "DEBUG: jtrans_pitch[Play] = " << PitchLE[Play]->text();
 }
 
-void Gui_Midi::stopTypeChanged()
+void Gui_Midi::stopChanged()
 {
-  jtrans_type[Stop] = TypeLE[Stop]->text().toInt();
-  qDebug() << "DEBUG: jtrans_type[Stop] = " << TypeLE[Stop]->text();
-}
-
-void Gui_Midi::stopChanChanged()
-{
-  jtrans_chan[Stop] = ChanLE[Stop]->text().toInt();
-  qDebug() << "DEBUG: jtrans_chan[Stop] = " << ChanLE[Stop]->text();
-}
-
-void Gui_Midi::stopPitchChanged()
-{
+  jtrans_type[Stop]  = TypeLE[Stop]->text().toInt();
+  jtrans_chan[Stop]  = ChanLE[Stop]->text().toInt();
   jtrans_pitch[Stop] = PitchLE[Stop]->text().toInt();
+  qDebug() << "DEBUG: jtrans_type[Stop]  = " << TypeLE[Stop]->text();
+  qDebug() << "DEBUG: jtrans_chan[Stop]  = " << ChanLE[Stop]->text();
   qDebug() << "DEBUG: jtrans_pitch[Stop] = " << PitchLE[Stop]->text();
 }
 
-void Gui_Midi::rewindTypeChanged()
+void Gui_Midi::rewindChanged()
 {
-  jtrans_type[Rewind] = TypeLE[Rewind]->text().toInt();
-  qDebug() << "DEBUG: jtrans_type[Rewind] = " << TypeLE[Rewind]->text();
-}
-
-void Gui_Midi::rewindChanChanged()
-{
-  jtrans_chan[Rewind] = ChanLE[Rewind]->text().toInt();
-  qDebug() << "DEBUG: jtrans_chan[Rewind] = " << ChanLE[Rewind]->text();
-}
-
-void Gui_Midi::rewindPitchChanged()
-{
+  jtrans_type[Rewind]  = TypeLE[Rewind]->text().toInt();
+  jtrans_chan[Rewind]  = ChanLE[Rewind]->text().toInt();
   jtrans_pitch[Rewind] = PitchLE[Rewind]->text().toInt();
+  qDebug() << "DEBUG: jtrans_type[Rewind]  = " << TypeLE[Rewind]->text();
+  qDebug() << "DEBUG: jtrans_chan[Rewind]  = " << ChanLE[Rewind]->text();
   qDebug() << "DEBUG: jtrans_pitch[Rewind] = " << PitchLE[Rewind]->text();
 }
 
-void Gui_Midi::forwardTypeChanged()
+void Gui_Midi::forwardChanged()
 {
-  jtrans_type[Forward] = TypeLE[Forward]->text().toInt();
-  qDebug() << "DEBUG: jtrans_type[Forward] = " << TypeLE[Forward]->text();
-}
-
-void Gui_Midi::forwardChanChanged()
-{
-  jtrans_chan[Forward] = ChanLE[Forward]->text().toInt();
-  qDebug() << "DEBUG: jtrans_chan[Forward] = " << ChanLE[Forward]->text();
-}
-
-void Gui_Midi::forwardPitchChanged()
-{
+  jtrans_type[Forward]  = TypeLE[Forward]->text().toInt();
+  jtrans_chan[Forward]  = ChanLE[Forward]->text().toInt();
   jtrans_pitch[Forward] = PitchLE[Forward]->text().toInt();
+  qDebug() << "DEBUG: jtrans_type[Forward]  = " << TypeLE[Forward]->text();
+  qDebug() << "DEBUG: jtrans_chan[Forward]  = " << ChanLE[Forward]->text();
   qDebug() << "DEBUG: jtrans_pitch[Forward] = " << PitchLE[Forward]->text();
 }
 
-void Gui_Midi::backwardTypeChanged()
+void Gui_Midi::backwardChanged()
 {
-  jtrans_type[Backward] = TypeLE[Backward]->text().toInt();
-  qDebug() << "DEBUG: jtrans_type[Backward] = " << TypeLE[Backward]->text();
-}
-
-void Gui_Midi::backwardChanChanged()
-{
-  jtrans_chan[Backward] = ChanLE[Backward]->text().toInt();
-  qDebug() << "DEBUG: jtrans_chan[Backward] = " << ChanLE[Backward]->text();
-}
-
-void Gui_Midi::backwardPitchChanged()
-{
+  jtrans_type[Backward]  = TypeLE[Backward]->text().toInt();
+  jtrans_chan[Backward]  = ChanLE[Backward]->text().toInt();
   jtrans_pitch[Backward] = PitchLE[Backward]->text().toInt();
+  qDebug() << "DEBUG: jtrans_type[Backward]  = " << TypeLE[Backward]->text();
+  qDebug() << "DEBUG: jtrans_chan[Backward]  = " << ChanLE[Backward]->text();
   qDebug() << "DEBUG: jtrans_pitch[Backward] = " << PitchLE[Backward]->text();
 }
 

@@ -62,21 +62,11 @@ class Gui_Midi : public QMainWindow
   void save_File();
   int  about_dialog();
   
-  void playTypeChanged();
-  void playChanChanged();
-  void playPitchChanged();
-  void stopTypeChanged();
-  void stopChanChanged();
-  void stopPitchChanged();
-  void rewindTypeChanged();
-  void rewindChanChanged();
-  void rewindPitchChanged();
-  void forwardTypeChanged();
-  void forwardChanChanged();
-  void forwardPitchChanged();
-  void backwardTypeChanged();
-  void backwardChanChanged();
-  void backwardPitchChanged();
+  void playChanged();
+  void stopChanged();
+  void rewindChanged();
+  void forwardChanged();
+  void backwardChanged();
   void skipAccelChanged();
   
   void playLearnChanged();
