@@ -87,11 +87,7 @@ int qtmidi_process(jack_nframes_t nframes, void *arg)
   
   skip_accel = ptrGuiMidi->getSkipAccel();
   
-  learn_mode = ptrGuiMidi->isLearnMode(Gui_Midi::Play) || 
-    ptrGuiMidi->isLearnMode(Gui_Midi::Stop) ||
-    ptrGuiMidi->isLearnMode(Gui_Midi::Rewind) ||
-    ptrGuiMidi->isLearnMode(Gui_Midi::Forward) ||
-    ptrGuiMidi->isLearnMode(Gui_Midi::Backward);
+  learn_mode = ptrGuiMidi->isLearnMode();
   
   buffer = jack_port_get_buffer(port, nframes);
   assert(buffer);

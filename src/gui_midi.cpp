@@ -23,6 +23,7 @@
 #include <QMap>
 #include <QIntValidator>
 #include <QDoubleValidator>
+#include <QTimer>
 
 #include <sstream>
 #include <iostream>
@@ -47,6 +48,8 @@
 
 Gui_Midi::Gui_Midi(QMainWindow *parent) : QMainWindow(parent)
 {
+  midiTimer = new QTimer();
+  
   jtrans_type[Play]      = 0;
   jtrans_chan[Play]      = 0;
   jtrans_pitch[Play]     = -1;
@@ -63,17 +66,14 @@ Gui_Midi::Gui_Midi(QMainWindow *parent) : QMainWindow(parent)
   jtrans_chan[Backward]  = 0;
   jtrans_pitch[Backward] = -1;
   
-  learn_mode[Play]     = false;
-  learn_mode[Stop]     = false;
-  learn_mode[Rewind]   = false;
-  learn_mode[Forward]  = false;
-  learn_mode[Backward] = false;
+  learn_mode = false;
 
   learn_type  = -1;
   learn_chan  = -1;
   learn_pitch = -1;
 
   skipAccel = 1.1;
+  timerPoll = 500;
   
   // Define the GUI
   
@@ -115,8 +115,13 @@ Gui_Midi::Gui_Midi(QMainWindow *parent) : QMainWindow(parent)
   buildDialog(parent);
 }
 
+Gui_Midi::~Gui_Midi()
+{
+  delete midiTimer;
+}
+
 void Gui_Midi::buildDialog(QMainWindow *parent)
-{  
+{
   // Create the dialog
     
   QLabel* playTypeLabel      = new QLabel(tr("Midi Type:"), parent);
@@ -135,8 +140,10 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QLabel* backwardChanLabel  = new QLabel(tr("Chan Type:"), parent);
   QLabel* backwardPitchLabel = new QLabel(tr("Pitch Type:"), parent);
   QLabel* skipAccelLabel     = new QLabel(tr("Forward / Backward speed:"), parent);
+  QLabel* timerPollLabel     = new QLabel(tr("Midi timer polling:"), parent);
 
-  QValidator *midiValidator = new QIntValidator(0, 127, this);
+  QValidator *midiValidator  = new QIntValidator(0, 127, this);
+  QValidator *timerValidator = new QIntValidator(0, 10000, this);
   
   // Get the size of a char
   QFontMetrics metrics(playTypeLabel->font());
@@ -236,6 +243,10 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QValidator *floatValidator = new QDoubleValidator(1.0, 60.0, 4, this);
   SkipAccelLE->setText(QString::number(skipAccel));
   SkipAccelLE->setValidator(floatValidator);
+
+  TimerPollLE = new QLineEdit(parent); 
+  TimerPollLE->setText(QString::number(timerPoll));
+  SkipAccelLE->setValidator(timerValidator);
   
   QPushButton* playApply      = new QPushButton(tr("Apply"), parent);
   QPushButton* stopApply      = new QPushButton(tr("Apply"), parent);
@@ -243,25 +254,16 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QPushButton* forwardApply   = new QPushButton(tr("Apply"), parent);
   QPushButton* backwardApply  = new QPushButton(tr("Apply"), parent);
   QPushButton* skipAccelApply = new QPushButton(tr("Apply"), parent);
+  QPushButton* timerPollApply = new QPushButton(tr("Apply"), parent);
 
-  connect(playApply,      SIGNAL(clicked()), this, SLOT(playChanged()));
-  connect(stopApply,      SIGNAL(clicked()), this, SLOT(stopChanged()));
-  connect(rewindApply,    SIGNAL(clicked()), this, SLOT(rewindChanged()));
-  connect(forwardApply,   SIGNAL(clicked()), this, SLOT(forwardChanged()));
-  connect(backwardApply,  SIGNAL(clicked()), this, SLOT(backwardChanged()));
+  connect(playApply,     SIGNAL(clicked()), this, SLOT(playChanged()));
+  connect(stopApply,     SIGNAL(clicked()), this, SLOT(stopChanged()));
+  connect(rewindApply,   SIGNAL(clicked()), this, SLOT(rewindChanged()));
+  connect(forwardApply,  SIGNAL(clicked()), this, SLOT(forwardChanged()));
+  connect(backwardApply, SIGNAL(clicked()), this, SLOT(backwardChanged()));
+
   connect(skipAccelApply, SIGNAL(clicked()), this, SLOT(skipAccelChanged()));
-  
-  QPushButton* playLearnButton      = new QPushButton(tr("Learn"), parent);
-  QPushButton* stopLearnButton      = new QPushButton(tr("Learn"), parent);
-  QPushButton* rewindLearnButton    = new QPushButton(tr("Learn"), parent);
-  QPushButton* forwardLearnButton   = new QPushButton(tr("Learn"), parent);
-  QPushButton* backwardLearnButton  = new QPushButton(tr("Learn"), parent);
-  
-  connect(playLearnButton,     SIGNAL(clicked()), this, SLOT(playLearnChanged()));
-  connect(stopLearnButton,     SIGNAL(clicked()), this, SLOT(stopLearnChanged()));
-  connect(rewindLearnButton,   SIGNAL(clicked()), this, SLOT(rewindLearnChanged()));
-  connect(forwardLearnButton,  SIGNAL(clicked()), this, SLOT(forwardLearnChanged()));
-  connect(backwardLearnButton, SIGNAL(clicked()), this, SLOT(backwardLearnChanged()));
+  connect(timerPollApply, SIGNAL(clicked()), this, SLOT(timerPollChanged()));
   
   // Play part
   
@@ -376,6 +378,13 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   skipAccelLayout->addWidget(SkipAccelLE);
   skipAccelLayout->addWidget(skipAccelApply);
   skipAccelWidget->setLayout(skipAccelLayout);
+
+  QHBoxLayout* timerPollLayout = new QHBoxLayout(parent);
+  QWidget* timerPollWidget = new QWidget(parent);
+  timerPollLayout->addWidget(timerPollLabel);
+  timerPollLayout->addWidget(TimerPollLE);
+  timerPollLayout->addWidget(timerPollApply);
+  timerPollWidget->setLayout(timerPollLayout);
   
   // Horizontal pack part
   
@@ -384,7 +393,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   playLayout->addWidget(playTypeWidget, 0, Qt::AlignLeft);
   playLayout->addWidget(playChanWidget, 0, Qt::AlignLeft);
   playLayout->addWidget(playPitchWidget, 0, Qt::AlignLeft);
-  playLayout->addWidget(playLearnButton, 0, Qt::AlignLeft);
   playWidget->setLayout(playLayout);
   
   QVBoxLayout *stopLayout = new QVBoxLayout(parent);
@@ -392,7 +400,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   stopLayout->addWidget(stopTypeWidget, 0, Qt::AlignLeft);
   stopLayout->addWidget(stopChanWidget, 0, Qt::AlignLeft);
   stopLayout->addWidget(stopPitchWidget, 0, Qt::AlignLeft);
-  stopLayout->addWidget(stopLearnButton, 0, Qt::AlignLeft);
   stopWidget->setLayout(stopLayout);
 
   QVBoxLayout *rewindLayout = new QVBoxLayout(parent);
@@ -400,7 +407,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   rewindLayout->addWidget(rewindTypeWidget, 0, Qt::AlignLeft);
   rewindLayout->addWidget(rewindChanWidget, 0, Qt::AlignLeft);
   rewindLayout->addWidget(rewindPitchWidget, 0, Qt::AlignLeft);
-  rewindLayout->addWidget(rewindLearnButton, 0, Qt::AlignLeft);
   rewindWidget->setLayout(rewindLayout);
   
   QVBoxLayout *forwardLayout = new QVBoxLayout(parent);
@@ -408,7 +414,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   forwardLayout->addWidget(forwardTypeWidget, 0, Qt::AlignLeft);
   forwardLayout->addWidget(forwardChanWidget, 0, Qt::AlignLeft);
   forwardLayout->addWidget(forwardPitchWidget, 0, Qt::AlignLeft);
-  forwardLayout->addWidget(forwardLearnButton, 0, Qt::AlignLeft);
   forwardWidget->setLayout(forwardLayout);
   
   QVBoxLayout *backwardLayout = new QVBoxLayout(parent);
@@ -416,18 +421,21 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   backwardLayout->addWidget(backwardTypeWidget, 0, Qt::AlignLeft);
   backwardLayout->addWidget(backwardChanWidget, 0, Qt::AlignLeft);
   backwardLayout->addWidget(backwardPitchWidget, 0, Qt::AlignLeft);
-  backwardLayout->addWidget(backwardLearnButton, 0, Qt::AlignLeft);
   backwardWidget->setLayout(backwardLayout);
 
   QVBoxLayout *parametersLayout = new QVBoxLayout(parent);
   QWidget *parametersWidget = new QWidget(parent);
   parametersLayout->addWidget(skipAccelWidget, 0, Qt::AlignLeft);
+  parametersLayout->addWidget(timerPollWidget, 0, Qt::AlignLeft);
   parametersWidget->setLayout(parametersLayout);
+  
+  QPushButton *learnButton = new QPushButton(tr("Learn"), parent);
+  connect(learnButton, SIGNAL(clicked()), this, SLOT(midiPoll()));
   
   QPushButton *exitButton = new QPushButton(tr("Exit"), parent);
   connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
   
-  QTabWidget *tabWidget = new QTabWidget(parent);
+  tabWidget = new QTabWidget(parent);
   tabWidget->addTab(playWidget,       QIcon(":/images/Play"),     tr("Play"));
   tabWidget->addTab(stopWidget,       QIcon(":/images/Stop"),     tr("Stop"));
   tabWidget->addTab(rewindWidget,     QIcon(":/images/Rewind"),   tr("Rewind"));
@@ -438,6 +446,7 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QVBoxLayout* dialogLayout = new QVBoxLayout(parent);
   QWidget* dialogWidget = new QWidget(parent);
   dialogLayout->addWidget(tabWidget);
+  dialogLayout->addWidget(learnButton);
   dialogLayout->addWidget(exitButton);
   dialogWidget->setLayout(dialogLayout);
   
@@ -508,48 +517,59 @@ void Gui_Midi::backwardChanged()
 
 void Gui_Midi::playLearnChanged()
 {
-  learn_mode[Play] = !learn_mode[Play]; // We toggle between modes
-  TypeLE[Play]->setText(QString::number(learn_type));
-  ChanLE[Play]->setText(QString::number(learn_chan));
-  PitchLE[Play]->setText(QString::number(learn_pitch));
+  if (tabWidget->currentIndex()==0) {
+    TypeLE[Play]->setText(QString::number(learn_type));
+    ChanLE[Play]->setText(QString::number(learn_chan));
+    PitchLE[Play]->setText(QString::number(learn_pitch));
+  }
 }
 
 void Gui_Midi::stopLearnChanged()
 {
-  learn_mode[Stop] = !learn_mode[Stop]; // We toggle between modes
-  TypeLE[Stop]->setText(QString::number(learn_type));
-  ChanLE[Stop]->setText(QString::number(learn_chan));
-  PitchLE[Stop]->setText(QString::number(learn_pitch));
+  if (tabWidget->currentIndex()==1) {
+    TypeLE[Stop]->setText(QString::number(learn_type));
+    ChanLE[Stop]->setText(QString::number(learn_chan));
+    PitchLE[Stop]->setText(QString::number(learn_pitch));
+  }
 }
 
 void Gui_Midi::rewindLearnChanged()
 {
-  learn_mode[Rewind] = !learn_mode[Rewind]; // We toggle between modes
-  TypeLE[Rewind]->setText(QString::number(learn_type));
-  ChanLE[Rewind]->setText(QString::number(learn_chan));
-  PitchLE[Rewind]->setText(QString::number(learn_pitch));
+  if (tabWidget->currentIndex()==2) {
+    TypeLE[Rewind]->setText(QString::number(learn_type));
+    ChanLE[Rewind]->setText(QString::number(learn_chan));
+    PitchLE[Rewind]->setText(QString::number(learn_pitch));
+  }
 }
 
 void Gui_Midi::forwardLearnChanged()
 {
-  learn_mode[Forward] = !learn_mode[Forward]; // We toggle between modes
-  TypeLE[Forward]->setText(QString::number(learn_type));
-  ChanLE[Forward]->setText(QString::number(learn_chan));
-  PitchLE[Forward]->setText(QString::number(learn_pitch));
+  if (tabWidget->currentIndex()==3) {
+    TypeLE[Forward]->setText(QString::number(learn_type));
+    ChanLE[Forward]->setText(QString::number(learn_chan));
+    PitchLE[Forward]->setText(QString::number(learn_pitch));
+  }
 }
 
 void Gui_Midi::backwardLearnChanged()
 {
-  learn_mode[Backward] = !learn_mode[Backward]; // We toggle between modes
-  TypeLE[Backward]->setText(QString::number(learn_type));
-  ChanLE[Backward]->setText(QString::number(learn_chan));
-  PitchLE[Backward]->setText(QString::number(learn_pitch));
+  if (tabWidget->currentIndex()==4) {
+    TypeLE[Backward]->setText(QString::number(learn_type));
+    ChanLE[Backward]->setText(QString::number(learn_chan));
+    PitchLE[Backward]->setText(QString::number(learn_pitch));
+  }
 }
 
 void Gui_Midi::skipAccelChanged()
 {
   skipAccel = SkipAccelLE->text().toInt();
   qDebug() << "DEBUG: skipAccel = " << SkipAccelLE->text();
+}
+
+void Gui_Midi::timerPollChanged()
+{
+  timerPoll = TimerPollLE->text().toFloat();
+  qDebug() << "DEBUG: timerPoll = " << TimerPollLE->text();
 }
 
 bool Gui_Midi::load_config_file(QString fileName)
@@ -725,9 +745,9 @@ void Gui_Midi::setJTransPitch(button_type btype, int val)
   jtrans_pitch[btype] = val;
 }
 
-bool Gui_Midi::isLearnMode(button_type btype) const
+bool Gui_Midi::isLearnMode() const
 {
-  return learn_mode[btype];
+  return learn_mode;
 }
 
 void Gui_Midi::setLearnType(int val)
@@ -770,3 +790,29 @@ void Gui_Midi::setSkipAccel(float val)
   skipAccel = val;
 }
 
+void Gui_Midi::midiPoll()
+{
+  learn_mode = !learn_mode;
+  
+  if (learn_mode) startMidiPoll();
+  else            stopMidiPoll();
+}
+
+void Gui_Midi::startMidiPoll()
+{
+  // Connect our signal and slot
+  connect(midiTimer, SIGNAL(timeout()), this, SLOT(playLearnChanged()));
+  connect(midiTimer, SIGNAL(timeout()), this, SLOT(stopLearnChanged()));
+  connect(midiTimer, SIGNAL(timeout()), this, SLOT(rewindLearnChanged()));
+  connect(midiTimer, SIGNAL(timeout()), this, SLOT(forwardLearnChanged()));
+  connect(midiTimer, SIGNAL(timeout()), this, SLOT(backwardLearnChanged()));
+  
+  midiTimer->setInterval(timerPoll);
+  midiTimer->setSingleShot(false);
+  midiTimer->start(timerPoll); // Start the timer to update the Gui
+}
+
+void Gui_Midi::stopMidiPoll()
+{
+  midiTimer->stop(); // Stop the timer
+}

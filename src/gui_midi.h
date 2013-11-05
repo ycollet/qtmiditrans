@@ -24,6 +24,8 @@
 #include <QtGui>
 #include <QMap>
 
+#include "gui_midi_thread.h"
+
 class Gui_Midi : public QMainWindow
 {
   Q_OBJECT
@@ -32,6 +34,8 @@ class Gui_Midi : public QMainWindow
   enum button_type {Play, Stop, Rewind, Forward, Backward};
   
   Gui_Midi(QMainWindow * parent = 0);
+  ~Gui_Midi();
+  
   void buildDialog(QMainWindow * parent);
   
   bool load_config_file(QString fileName);
@@ -45,7 +49,7 @@ class Gui_Midi : public QMainWindow
   void setJTransChan(button_type btype, int val);
   void setJTransPitch(button_type btype, int val);
 
-  bool isLearnMode(button_type btype) const;
+  bool isLearnMode() const;
   
   void setLearnType(int);
   void setLearnChan(int);
@@ -56,7 +60,10 @@ class Gui_Midi : public QMainWindow
   
   float getSkipAccel() const;
   void setSkipAccel(float val);
-  
+
+  void startMidiPoll();
+  void stopMidiPoll();
+
  private slots:
   void open_File();
   void save_File();
@@ -68,6 +75,9 @@ class Gui_Midi : public QMainWindow
   void forwardChanged();
   void backwardChanged();
   void skipAccelChanged();
+  void timerPollChanged();
+  
+  void midiPoll();
   
   void playLearnChanged();
   void stopLearnChanged();
@@ -83,22 +93,28 @@ class Gui_Midi : public QMainWindow
   QAction *exitAction;
   QAction *aboutAction;
   
+  QTabWidget *tabWidget;
+
   QMap<button_type, QLineEdit*> TypeLE;
   QMap<button_type, QLineEdit*> ChanLE;
   QMap<button_type, QLineEdit*> PitchLE;
   QLineEdit* SkipAccelLE;
+  QLineEdit* TimerPollLE;
   
   QMap<button_type, int> jtrans_type;
   QMap<button_type, int> jtrans_chan;
   QMap<button_type, int> jtrans_pitch;
   
-  QMap<button_type, bool> learn_mode;
+  bool learn_mode;
+  
+  QTimer *midiTimer;
   
   int learn_type;
   int learn_chan;
   int learn_pitch;
 
   float skipAccel;
+  int timerPoll;
 };
 
 #endif
