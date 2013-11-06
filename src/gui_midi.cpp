@@ -140,7 +140,7 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QLabel* backwardChanLabel  = new QLabel(tr("Chan Type:"), parent);
   QLabel* backwardPitchLabel = new QLabel(tr("Pitch Type:"), parent);
   QLabel* skipAccelLabel     = new QLabel(tr("Forward / Backward speed:"), parent);
-  QLabel* timerPollLabel     = new QLabel(tr("Midi timer polling:"), parent);
+  QLabel* timerPollLabel     = new QLabel(tr("Midi timer polling (ms):"), parent);
 
   QValidator *midiValidator  = new QIntValidator(0, 127, this);
   QValidator *timerValidator = new QIntValidator(0, 10000, this);
@@ -148,7 +148,8 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   // Get the size of a char
   QFontMetrics metrics(playTypeLabel->font());
   int pixelWidth = metrics.width(QString("0"));
-  
+
+  // Define the LineEdit
   TypeLE[Play] = new QLineEdit(parent); 
   TypeLE[Play]->setText(QString::number(jtrans_type[Play]));
   TypeLE[Play]->setMaxLength(4);
@@ -242,28 +243,29 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   SkipAccelLE = new QLineEdit(parent); 
   QValidator *floatValidator = new QDoubleValidator(1.0, 60.0, 4, this);
   SkipAccelLE->setText(QString::number(skipAccel));
+  SkipAccelLE->setMaxLength(6);
+  SkipAccelLE->setFixedWidth(8*pixelWidth);
   SkipAccelLE->setValidator(floatValidator);
 
   TimerPollLE = new QLineEdit(parent); 
   TimerPollLE->setText(QString::number(timerPoll));
-  SkipAccelLE->setValidator(timerValidator);
+  TimerPollLE->setMaxLength(6);
+  TimerPollLE->setFixedWidth(8*pixelWidth);
+  TimerPollLE->setValidator(timerValidator);
   
-  QPushButton* playApply      = new QPushButton(tr("Apply"), parent);
-  QPushButton* stopApply      = new QPushButton(tr("Apply"), parent);
-  QPushButton* rewindApply    = new QPushButton(tr("Apply"), parent);
-  QPushButton* forwardApply   = new QPushButton(tr("Apply"), parent);
-  QPushButton* backwardApply  = new QPushButton(tr("Apply"), parent);
-  QPushButton* skipAccelApply = new QPushButton(tr("Apply"), parent);
-  QPushButton* timerPollApply = new QPushButton(tr("Apply"), parent);
+  QPushButton* playApply       = new QPushButton(tr("Apply"), parent);
+  QPushButton* stopApply       = new QPushButton(tr("Apply"), parent);
+  QPushButton* rewindApply     = new QPushButton(tr("Apply"), parent);
+  QPushButton* forwardApply    = new QPushButton(tr("Apply"), parent);
+  QPushButton* backwardApply   = new QPushButton(tr("Apply"), parent);
+  QPushButton* parametersApply = new QPushButton(tr("Apply"), parent);
 
-  connect(playApply,     SIGNAL(clicked()), this, SLOT(playChanged()));
-  connect(stopApply,     SIGNAL(clicked()), this, SLOT(stopChanged()));
-  connect(rewindApply,   SIGNAL(clicked()), this, SLOT(rewindChanged()));
-  connect(forwardApply,  SIGNAL(clicked()), this, SLOT(forwardChanged()));
-  connect(backwardApply, SIGNAL(clicked()), this, SLOT(backwardChanged()));
-
-  connect(skipAccelApply, SIGNAL(clicked()), this, SLOT(skipAccelChanged()));
-  connect(timerPollApply, SIGNAL(clicked()), this, SLOT(timerPollChanged()));
+  connect(playApply,       SIGNAL(clicked()), this, SLOT(playChanged()));
+  connect(stopApply,       SIGNAL(clicked()), this, SLOT(stopChanged()));
+  connect(rewindApply,     SIGNAL(clicked()), this, SLOT(rewindChanged()));
+  connect(forwardApply,    SIGNAL(clicked()), this, SLOT(forwardChanged()));
+  connect(backwardApply,   SIGNAL(clicked()), this, SLOT(backwardChanged()));
+  connect(parametersApply, SIGNAL(clicked()), this, SLOT(parametersChanged()));
   
   // Play part
   
@@ -277,7 +279,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* playChanWidget = new QWidget(parent);
   playChanLayout->addWidget(playChanLabel);
   playChanLayout->addWidget(ChanLE[Play]);
-  playChanLayout->addWidget(playApply);
   playChanWidget->setLayout(playChanLayout);
 
   QHBoxLayout* playPitchLayout = new QHBoxLayout(parent);
@@ -286,6 +287,13 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   playPitchLayout->addWidget(PitchLE[Play]);
   playPitchWidget->setLayout(playPitchLayout);
   
+  QHBoxLayout* playApplyLayout = new QHBoxLayout(parent);
+  QWidget* playApplyWidget = new QWidget(parent);
+  playApplyLayout->addStretch(10);
+  playApplyLayout->addWidget(playApply);
+  playApplyLayout->addStretch(10);
+  playApplyWidget->setLayout(playApplyLayout);
+
   // Stop part
   
   QHBoxLayout* stopTypeLayout = new QHBoxLayout(parent);
@@ -298,7 +306,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* stopChanWidget = new QWidget(parent);
   stopChanLayout->addWidget(stopChanLabel);
   stopChanLayout->addWidget(ChanLE[Stop]);
-  stopChanLayout->addWidget(stopApply);
   stopChanWidget->setLayout(stopChanLayout);
 
   QHBoxLayout* stopPitchLayout = new QHBoxLayout(parent);
@@ -319,7 +326,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* rewindChanWidget = new QWidget(parent);
   rewindChanLayout->addWidget(rewindChanLabel);
   rewindChanLayout->addWidget(ChanLE[Rewind]);
-  rewindChanLayout->addWidget(rewindApply);
   rewindChanWidget->setLayout(rewindChanLayout);
 
   QHBoxLayout* rewindPitchLayout = new QHBoxLayout(parent);
@@ -340,7 +346,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* forwardChanWidget = new QWidget(parent);
   forwardChanLayout->addWidget(forwardChanLabel);
   forwardChanLayout->addWidget(ChanLE[Forward]);
-  forwardChanLayout->addWidget(forwardApply);
   forwardChanWidget->setLayout(forwardChanLayout);
 
   QHBoxLayout* forwardPitchLayout = new QHBoxLayout(parent);
@@ -361,7 +366,6 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* backwardChanWidget = new QWidget(parent);
   backwardChanLayout->addWidget(backwardChanLabel);
   backwardChanLayout->addWidget(ChanLE[Backward]);
-  backwardChanLayout->addWidget(backwardApply);
   backwardChanWidget->setLayout(backwardChanLayout);
 
   QHBoxLayout* backwardPitchLayout = new QHBoxLayout(parent);
@@ -376,64 +380,92 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   QWidget* skipAccelWidget = new QWidget(parent);
   skipAccelLayout->addWidget(skipAccelLabel);
   skipAccelLayout->addWidget(SkipAccelLE);
-  skipAccelLayout->addWidget(skipAccelApply);
   skipAccelWidget->setLayout(skipAccelLayout);
 
   QHBoxLayout* timerPollLayout = new QHBoxLayout(parent);
   QWidget* timerPollWidget = new QWidget(parent);
   timerPollLayout->addWidget(timerPollLabel);
   timerPollLayout->addWidget(TimerPollLE);
-  timerPollLayout->addWidget(timerPollApply);
   timerPollWidget->setLayout(timerPollLayout);
   
   // Horizontal pack part
   
   QVBoxLayout *playLayout = new QVBoxLayout(parent);
   QWidget *playWidget = new QWidget(parent);
-  playLayout->addWidget(playTypeWidget, 0, Qt::AlignLeft);
-  playLayout->addWidget(playChanWidget, 0, Qt::AlignLeft);
+  playLayout->addWidget(playTypeWidget,  0, Qt::AlignLeft);
+  playLayout->addWidget(playChanWidget,  0, Qt::AlignLeft);
   playLayout->addWidget(playPitchWidget, 0, Qt::AlignLeft);
+  playLayout->addWidget(playApply,       0, Qt::AlignHCenter);
   playWidget->setLayout(playLayout);
   
   QVBoxLayout *stopLayout = new QVBoxLayout(parent);
   QWidget *stopWidget = new QWidget(parent);
-  stopLayout->addWidget(stopTypeWidget, 0, Qt::AlignLeft);
-  stopLayout->addWidget(stopChanWidget, 0, Qt::AlignLeft);
+  stopLayout->addWidget(stopTypeWidget,  0, Qt::AlignLeft);
+  stopLayout->addWidget(stopChanWidget,  0, Qt::AlignLeft);
   stopLayout->addWidget(stopPitchWidget, 0, Qt::AlignLeft);
+  stopLayout->addWidget(stopApply,       0, Qt::AlignHCenter);
   stopWidget->setLayout(stopLayout);
 
   QVBoxLayout *rewindLayout = new QVBoxLayout(parent);
   QWidget *rewindWidget = new QWidget(parent);
-  rewindLayout->addWidget(rewindTypeWidget, 0, Qt::AlignLeft);
-  rewindLayout->addWidget(rewindChanWidget, 0, Qt::AlignLeft);
+  rewindLayout->addWidget(rewindTypeWidget,  0, Qt::AlignLeft);
+  rewindLayout->addWidget(rewindChanWidget,  0, Qt::AlignLeft);
   rewindLayout->addWidget(rewindPitchWidget, 0, Qt::AlignLeft);
+  rewindLayout->addWidget(rewindApply,       0, Qt::AlignHCenter);
   rewindWidget->setLayout(rewindLayout);
   
   QVBoxLayout *forwardLayout = new QVBoxLayout(parent);
   QWidget *forwardWidget = new QWidget(parent);
-  forwardLayout->addWidget(forwardTypeWidget, 0, Qt::AlignLeft);
-  forwardLayout->addWidget(forwardChanWidget, 0, Qt::AlignLeft);
+  forwardLayout->addWidget(forwardTypeWidget,  0, Qt::AlignLeft);
+  forwardLayout->addWidget(forwardChanWidget,  0, Qt::AlignLeft);
   forwardLayout->addWidget(forwardPitchWidget, 0, Qt::AlignLeft);
+  forwardLayout->addWidget(forwardApply,       0, Qt::AlignHCenter);
   forwardWidget->setLayout(forwardLayout);
   
   QVBoxLayout *backwardLayout = new QVBoxLayout(parent);
   QWidget *backwardWidget = new QWidget(parent);
-  backwardLayout->addWidget(backwardTypeWidget, 0, Qt::AlignLeft);
-  backwardLayout->addWidget(backwardChanWidget, 0, Qt::AlignLeft);
+  backwardLayout->addWidget(backwardTypeWidget,  0, Qt::AlignLeft);
+  backwardLayout->addWidget(backwardChanWidget,  0, Qt::AlignLeft);
   backwardLayout->addWidget(backwardPitchWidget, 0, Qt::AlignLeft);
+  backwardLayout->addWidget(backwardApply,       0, Qt::AlignHCenter);
   backwardWidget->setLayout(backwardLayout);
 
   QVBoxLayout *parametersLayout = new QVBoxLayout(parent);
   QWidget *parametersWidget = new QWidget(parent);
   parametersLayout->addWidget(skipAccelWidget, 0, Qt::AlignLeft);
   parametersLayout->addWidget(timerPollWidget, 0, Qt::AlignLeft);
+  parametersLayout->addWidget(parametersApply, 0, Qt::AlignHCenter);
   parametersWidget->setLayout(parametersLayout);
   
   QPushButton *learnButton = new QPushButton(tr("Learn"), parent);
-  connect(learnButton, SIGNAL(clicked()), this, SLOT(midiPoll()));
+  ledLight = new QLed(parent);
+  connect(learnButton, SIGNAL(clicked()), this,     SLOT(midiPoll()));
+  connect(learnButton, SIGNAL(clicked()), ledLight, SLOT(switchLed()));
   
+  QHBoxLayout* learnLayout = new QHBoxLayout(parent);
+  QWidget* learnWidget = new QWidget(parent);
+  learnLayout->addStretch(10);
+  learnLayout->addWidget(learnButton);
+  learnLayout->addStretch(10);
+  learnLayout->addWidget(ledLight);
+  learnLayout->addStretch(10);
+  learnWidget->setLayout(learnLayout);
+
   QPushButton *exitButton = new QPushButton(tr("Exit"), parent);
   connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
+  
+  QHBoxLayout* exitLayout = new QHBoxLayout(parent);
+  QWidget* exitWidget = new QWidget(parent);
+  exitLayout->addStretch(10);
+  exitLayout->addWidget(exitButton);
+  exitLayout->addStretch(10);
+  exitWidget->setLayout(exitLayout);
+
+  QHBoxLayout* commonButtonsLayout = new QHBoxLayout(parent);
+  QWidget* commonButtonsWidget = new QWidget(parent);
+  commonButtonsLayout->addWidget(exitWidget);
+  commonButtonsLayout->addWidget(learnWidget);
+  commonButtonsWidget->setLayout(commonButtonsLayout);
   
   tabWidget = new QTabWidget(parent);
   tabWidget->addTab(playWidget,       QIcon(":/images/Play"),     tr("Play"));
@@ -442,12 +474,11 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   tabWidget->addTab(forwardWidget,    QIcon(":/images/Forward"),  tr("Forward"));
   tabWidget->addTab(backwardWidget,   QIcon(":/images/Backward"), tr("Backward"));
   tabWidget->addTab(parametersWidget, tr("Parameters"));
-
+  
   QVBoxLayout* dialogLayout = new QVBoxLayout(parent);
   QWidget* dialogWidget = new QWidget(parent);
   dialogLayout->addWidget(tabWidget);
-  dialogLayout->addWidget(learnButton);
-  dialogLayout->addWidget(exitButton);
+  dialogLayout->addWidget(commonButtonsWidget);
   dialogWidget->setLayout(dialogLayout);
   
   dialogWidget->resize(dialogWidget->minimumWidth(),dialogWidget->height());
@@ -560,15 +591,11 @@ void Gui_Midi::backwardLearnChanged()
   }
 }
 
-void Gui_Midi::skipAccelChanged()
+void Gui_Midi::parametersChanged()
 {
   skipAccel = SkipAccelLE->text().toInt();
-  qDebug() << "DEBUG: skipAccel = " << SkipAccelLE->text();
-}
-
-void Gui_Midi::timerPollChanged()
-{
   timerPoll = TimerPollLE->text().toFloat();
+  qDebug() << "DEBUG: skipAccel = " << SkipAccelLE->text();
   qDebug() << "DEBUG: timerPoll = " << TimerPollLE->text();
 }
 

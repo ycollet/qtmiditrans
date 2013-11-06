@@ -23,9 +23,11 @@ option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files (W
 set(QTMIDI_SRCS main.cpp)
 
 set(QTMIDI_UI_SRCS ./gui_midi.cpp
+                   ./QLed.cpp
 		   ./help_dialog.cpp)
 
 set(QTMIDI_UI_HEADERS ./gui_midi.h
+		      ./QLed.h
 		      ./help_dialog.h)
 
 set(QTMIDI_TRANS ./translations/qtmidi_en.ts)

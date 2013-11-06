@@ -24,7 +24,7 @@
 #include <QtGui>
 #include <QMap>
 
-#include "gui_midi_thread.h"
+#include "QLed.h"
 
 class Gui_Midi : public QMainWindow
 {
@@ -74,8 +74,7 @@ class Gui_Midi : public QMainWindow
   void rewindChanged();
   void forwardChanged();
   void backwardChanged();
-  void skipAccelChanged();
-  void timerPollChanged();
+  void parametersChanged();
   
   void midiPoll();
   
@@ -100,6 +99,7 @@ class Gui_Midi : public QMainWindow
   QMap<button_type, QLineEdit*> PitchLE;
   QLineEdit* SkipAccelLE;
   QLineEdit* TimerPollLE;
+  QLed* ledLight;
   
   QMap<button_type, int> jtrans_type;
   QMap<button_type, int> jtrans_chan;
