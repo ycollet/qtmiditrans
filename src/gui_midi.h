@@ -84,7 +84,13 @@ class Gui_Midi : public QMainWindow
   void forwardLearnChanged();
   void backwardLearnChanged();
   
+ protected:
+  void closeEvent(QCloseEvent *event);
+ 
  private:
+  void LoadSettings();
+  void SaveSettings();
+  
   QMenu   *fileMenu;
   QMenu   *aboutMenu;
   QAction *fileOpenAction;

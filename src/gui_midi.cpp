@@ -50,30 +50,7 @@ Gui_Midi::Gui_Midi(QMainWindow *parent) : QMainWindow(parent)
 {
   midiTimer = new QTimer();
   
-  jtrans_type[Play]      = 0;
-  jtrans_chan[Play]      = 0;
-  jtrans_pitch[Play]     = -1;
-  jtrans_type[Stop]      = 0;
-  jtrans_chan[Stop]      = 0;
-  jtrans_pitch[Stop]     = -1;
-  jtrans_type[Rewind]    = 0;
-  jtrans_chan[Rewind]    = 0;
-  jtrans_pitch[Rewind]   = -1;
-  jtrans_type[Forward]   = 0;
-  jtrans_chan[Forward]   = 0;
-  jtrans_pitch[Forward]  = -1;
-  jtrans_type[Backward]  = 0;
-  jtrans_chan[Backward]  = 0;
-  jtrans_pitch[Backward] = -1;
-  
-  learn_mode = false;
-
-  learn_type  = -1;
-  learn_chan  = -1;
-  learn_pitch = -1;
-
-  skipAccel = 1.1;
-  timerPoll = 500;
+  LoadSettings();
   
   // Define the GUI
   
@@ -842,4 +819,72 @@ void Gui_Midi::startMidiPoll()
 void Gui_Midi::stopMidiPoll()
 {
   midiTimer->stop(); // Stop the timer
+}
+
+void Gui_Midi::LoadSettings()
+{
+  QSettings settings("AudioApp", "QtMidiTrans");
+
+  jtrans_type[Play]  = settings.value("PlayType",   0).toInt();
+  jtrans_chan[Play]  = settings.value("PlayChan",   0).toInt();
+  jtrans_pitch[Play] = settings.value("PlayPitch", -1).toInt();
+  
+  jtrans_type[Stop]  = settings.value("StopType",   0).toInt();
+  jtrans_chan[Stop]  = settings.value("StopChan",   0).toInt();
+  jtrans_pitch[Stop] = settings.value("StopPitch", -1).toInt();
+  
+  jtrans_type[Rewind]  = settings.value("RewindType",   0).toInt();
+  jtrans_chan[Rewind]  = settings.value("RewindChan",   0).toInt();
+  jtrans_pitch[Rewind] = settings.value("RewindPitch", -1).toInt();
+  
+  jtrans_type[Forward]  = settings.value("ForwardType",   0).toInt();
+  jtrans_chan[Forward]  = settings.value("ForwardChan",   0).toInt();
+  jtrans_pitch[Forward] = settings.value("ForwardPitch", -1).toInt();
+  
+  jtrans_type[Backward]  = settings.value("BackwardType",   0).toInt();
+  jtrans_chan[Backward]  = settings.value("BackwardChan",   0).toInt();
+  jtrans_pitch[Backward] = settings.value("BackwardPitch", -1).toInt();
+  
+  learn_mode = false;
+  
+  learn_type  = -1;
+  learn_chan  = -1;
+  learn_pitch = -1;
+  
+  skipAccel = settings.value("SkipAccel", 1.1).toDouble();
+  timerPoll = settings.value("TimerPoll", 500).toDouble();
+}
+
+void Gui_Midi::SaveSettings()
+{
+  QSettings settings("AudioApp", "QtMidiTrans");
+  
+  settings.setValue("PlayType",  jtrans_type[Play]);
+  settings.setValue("PlayChan",  jtrans_chan[Play]);
+  settings.setValue("PlayPitch", jtrans_pitch[Play]);
+  
+  settings.setValue("StopType",  jtrans_type[Stop]);
+  settings.setValue("StopChan",  jtrans_chan[Stop]);
+  settings.setValue("StopPitch", jtrans_pitch[Stop]);
+  
+  settings.setValue("RewindType",  jtrans_type[Rewind]);
+  settings.setValue("RewindChan",  jtrans_chan[Rewind]);
+  settings.setValue("RewindPitch", jtrans_pitch[Rewind]);
+  
+  settings.setValue("ForwardType",  jtrans_type[Forward]);
+  settings.setValue("ForwardChan",  jtrans_chan[Forward]);
+  settings.setValue("ForwardPitch", jtrans_pitch[Forward]);
+  
+  settings.setValue("BackwardType",  jtrans_type[Backward]);
+  settings.setValue("BackwardChan",  jtrans_chan[Backward]);
+  settings.setValue("BackwardPitch", jtrans_pitch[Backward]);
+
+  settings.value("SkipAccel", skipAccel);
+  settings.value("TimerPoll", timerPoll);
+}
+
+void Gui_Midi::closeEvent(QCloseEvent *event)
+{
+  SaveSettings();
+  event->accept();
 }
