@@ -3,7 +3,7 @@
 //  Qt Jack Midi Translater
 //  $Id:$
 //
-//  Copyright (C) 2013 by Yann Collette and others
+//  Copyright (C) 2013-2015 by Yann Collette and others
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License version 2.
@@ -21,7 +21,7 @@
 #ifndef GUI_MIDI_H
 #define GUI_MIDI_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QMap>
 
 #include "QLed.h"

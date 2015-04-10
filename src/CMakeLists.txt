@@ -3,7 +3,7 @@
 #  Qt Midi Translater
 #  $Id:$
 #
-#  Copyright (C) 2013 by Yann Collette and others
+#  Copyright (C) 2013-2015 by Yann Collette and others
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License version 2.
@@ -24,11 +24,11 @@ set(QTMIDI_SRCS main.cpp)
 
 set(QTMIDI_UI_SRCS ./gui_midi.cpp
                    ./QLed.cpp
-		   ./help_dialog.cpp)
+		           ./help_dialog.cpp)
 
 set(QTMIDI_UI_HEADERS ./gui_midi.h
-		      ./QLed.h
-		      ./help_dialog.h)
+		              ./QLed.h
+		              ./help_dialog.h)
 
 set(QTMIDI_TRANS ./translations/qtmidi_en.ts)
 
@@ -44,23 +44,25 @@ set(FILES_TO_TRANSLATE ${FTT_HEADER_FILES} ${FTT_CPP_FILES} ${FTT_UI_FILES})
 file(GLOB TRANSLATIONS_FILES translations/*.ts)
 
 if (UPDATE_TRANSLATIONS)
-  qt4_create_translation(QTMIDI_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
+  qt5_create_translation(QTMIDI_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
 else (UPDATE_TRANSLATIONS)
-  qt4_add_translation(QTMIDI_QM ${TRANSLATIONS_FILES})
+  qt5_add_translation(QTMIDI_QM ${TRANSLATIONS_FILES})
 endif (UPDATE_TRANSLATIONS) 
 
 add_custom_target(translations_target DEPENDS ${QTMIDI_QM})
 
-qt4_wrap_cpp(QTMIDI_UI_HEADERS_MOC ${QTMIDI_UI_HEADERS})
+qt5_wrap_cpp(QTMIDI_UI_HEADERS_MOC ${QTMIDI_UI_HEADERS})
 
-qt4_add_resources(QTMIDI_RSRCS ./qtmidi.qrc)
+qt5_add_resources(QTMIDI_RSRCS ./qtmidi.qrc)
 
-#qt4_add_translation(QTMIDI_QM ${QTMIDI_TRANS})
+#qt5_add_translation(QTMIDI_QM ${QTMIDI_TRANS})
 
-add_executable(qtmidi ${QTMIDI_SRCS} ${QTMIDI_RSRCS} ${QTMIDI_QM} ${QTMIDI_UI_SRCS} ${QTMIDI_UI_HEADERS_MOC})
-target_link_libraries(qtmidi ${QT_LIBRARIES} ${JACK_LIBRARIES})
+add_executable(qtmiditrans ${QTMIDI_SRCS} ${QTMIDI_RSRCS} ${QTMIDI_QM} ${QTMIDI_UI_SRCS} ${QTMIDI_UI_HEADERS_MOC})
+target_link_libraries(qtmiditrans ${Qt5Widgets_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES} ${JACK_LIBRARIES})
 
-install(TARGETS qtmidi
+qt5_use_modules(qtmiditrans Widgets WebKitWidgets)
+
+install(TARGETS qtmiditrans
         DESTINATION bin)
 
 install(FILES ${QM_FILES} 

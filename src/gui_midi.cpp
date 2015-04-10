@@ -3,7 +3,7 @@
 //  Qt Jack Midi Trans
 //  $Id:$
 //
-//  Copyright (C) 2013 by Yann Collette and others
+//  Copyright (C) 2013-2015 by Yann Collette and others
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License version 2.
@@ -18,8 +18,8 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include <QtGui>
-#include <QtWebKit/QWebView>
+#include <QtWidgets>
+#include <QtWebKitWidgets>
 #include <QMap>
 #include <QIntValidator>
 #include <QDoubleValidator>
