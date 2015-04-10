@@ -1,7 +1,7 @@
 #ifndef QLED_H
 #define QLED_H
 
-#include <QWidget>
+#include <QtWidgets>
 
 class QLed: public QWidget 
 {
