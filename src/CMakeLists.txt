@@ -39,7 +39,7 @@ target_link_libraries(qtmiditrans Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBR
 #   - creates an "update_translations" target that runs lupdate on the listed sources
 #   - compiles .ts -> .qm and makes them available for installation
 qt_add_translations(qtmiditrans
-    TS_FILES translations/qtmidi_en.ts
+    TS_FILES translations/qtmidi_en.ts translations/qtmidi_fr.ts
     SOURCES ${QTMIDI_SRCS} ${QTMIDI_UI_SRCS} ${QTMIDI_UI_HEADERS}
     QM_FILES_OUTPUT_VARIABLE QTMIDI_QM
 )
