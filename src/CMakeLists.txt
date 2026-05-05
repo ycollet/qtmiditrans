@@ -44,23 +44,17 @@ set(FILES_TO_TRANSLATE ${FTT_HEADER_FILES} ${FTT_CPP_FILES} ${FTT_UI_FILES})
 file(GLOB TRANSLATIONS_FILES translations/*.ts)
 
 if (UPDATE_TRANSLATIONS)
-  qt5_create_translation(QTMIDI_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
+  qt_create_translation(QTMIDI_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
 else (UPDATE_TRANSLATIONS)
-  qt5_add_translation(QTMIDI_QM ${TRANSLATIONS_FILES})
-endif (UPDATE_TRANSLATIONS) 
+  qt_add_translation(QTMIDI_QM ${TRANSLATIONS_FILES})
+endif (UPDATE_TRANSLATIONS)
 
 add_custom_target(translations_target DEPENDS ${QTMIDI_QM})
 
-qt5_wrap_cpp(QTMIDI_UI_HEADERS_MOC ${QTMIDI_UI_HEADERS})
+qt_add_resources(QTMIDI_RSRCS ./qtmidi.qrc)
 
-qt5_add_resources(QTMIDI_RSRCS ./qtmidi.qrc)
-
-#qt5_add_translation(QTMIDI_QM ${QTMIDI_TRANS})
-
-add_executable(qtmiditrans ${QTMIDI_SRCS} ${QTMIDI_RSRCS} ${QTMIDI_QM} ${QTMIDI_UI_SRCS} ${QTMIDI_UI_HEADERS_MOC})
-target_link_libraries(qtmiditrans ${Qt5Widgets_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES} ${JACK_LIBRARIES})
-
-qt5_use_modules(qtmiditrans Widgets WebKitWidgets)
+add_executable(qtmiditrans ${QTMIDI_SRCS} ${QTMIDI_RSRCS} ${QTMIDI_QM} ${QTMIDI_UI_SRCS})
+target_link_libraries(qtmiditrans Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES})
 
 install(TARGETS qtmiditrans
         DESTINATION bin)

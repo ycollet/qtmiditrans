@@ -18,7 +18,7 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include <QtWebKitWidgets>
+#include <QtWebEngineWidgets>
 
 #include "help_dialog.h"
 
@@ -28,8 +28,8 @@ HelpDialog::HelpDialog(QWidget *parent) : QDialog(parent)
 
   setWindowTitle("QtMidi Help");
   setWindowIcon(QIcon(":/images/MainIcon"));
-  
-  QWebView *view = new QWebView(this);
+
+  QWebEngineView *view = new QWebEngineView(this);
 
   view->setUrl(QUrl("qrc:///docs/main_html_doc"));
   view->show();

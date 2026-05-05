@@ -19,7 +19,6 @@
 //=============================================================================
 
 #include <QtWidgets>
-#include <QtWebKitWidgets>
 #include <QMap>
 #include <QIntValidator>
 #include <QDoubleValidator>
@@ -124,7 +123,7 @@ void Gui_Midi::buildDialog(QMainWindow *parent)
   
   // Get the size of a char
   QFontMetrics metrics(playTypeLabel->font());
-  int pixelWidth = metrics.width(QString("0"));
+  int pixelWidth = metrics.horizontalAdvance(QString("0"));
 
   // Define the LineEdit
   TypeLE[Play] = new QLineEdit(parent); 
@@ -668,27 +667,27 @@ bool Gui_Midi::save_config_file(QString fileName) const
   
   QTextStream out(&file);
   
-  out << "play_type "  << jtrans_type[Play]  << endl;
-  out << "play_chan "  << jtrans_chan[Play]  << endl;
-  out << "play_pitch " << jtrans_pitch[Play] << endl;
+  out << "play_type "  << jtrans_type[Play]  << Qt::endl;
+  out << "play_chan "  << jtrans_chan[Play]  << Qt::endl;
+  out << "play_pitch " << jtrans_pitch[Play] << Qt::endl;
   
-  out << "stop_type "  << jtrans_type[Stop]  << endl;
-  out << "stop_chan "  << jtrans_chan[Stop]  << endl;
-  out << "stop_pitch " << jtrans_pitch[Stop] << endl;
+  out << "stop_type "  << jtrans_type[Stop]  << Qt::endl;
+  out << "stop_chan "  << jtrans_chan[Stop]  << Qt::endl;
+  out << "stop_pitch " << jtrans_pitch[Stop] << Qt::endl;
   
-  out << "rewind_type "  << jtrans_type[Rewind]  << endl;
-  out << "rewind_chan "  << jtrans_chan[Rewind]  << endl;
-  out << "rewind_pitch " << jtrans_pitch[Rewind] << endl;
+  out << "rewind_type "  << jtrans_type[Rewind]  << Qt::endl;
+  out << "rewind_chan "  << jtrans_chan[Rewind]  << Qt::endl;
+  out << "rewind_pitch " << jtrans_pitch[Rewind] << Qt::endl;
   
-  out << "forward_type "  << jtrans_type[Forward]  << endl;
-  out << "forward_chan "  << jtrans_chan[Forward]  << endl;
-  out << "forward_pitch " << jtrans_pitch[Forward] << endl;
+  out << "forward_type "  << jtrans_type[Forward]  << Qt::endl;
+  out << "forward_chan "  << jtrans_chan[Forward]  << Qt::endl;
+  out << "forward_pitch " << jtrans_pitch[Forward] << Qt::endl;
   
-  out << "backward_type "  << jtrans_type[Backward]  << endl;
-  out << "backward_chan "  << jtrans_chan[Backward]  << endl;
-  out << "backward_pitch " << jtrans_pitch[Backward] << endl;
+  out << "backward_type "  << jtrans_type[Backward]  << Qt::endl;
+  out << "backward_chan "  << jtrans_chan[Backward]  << Qt::endl;
+  out << "backward_pitch " << jtrans_pitch[Backward] << Qt::endl;
 
-  out << "skip_accel " << skipAccel << endl;
+  out << "skip_accel " << skipAccel << Qt::endl;
   
   file.close();
 }
