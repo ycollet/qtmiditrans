@@ -34,6 +34,8 @@ qt_add_resources(QTMIDI_RSRCS ./qtmidi.qrc)
 
 add_executable(qtmiditrans ${QTMIDI_SRCS} ${QTMIDI_RSRCS} ${QTMIDI_UI_SRCS})
 target_link_libraries(qtmiditrans Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES})
+target_include_directories(qtmiditrans PRIVATE ${JACK_INCLUDE_DIRS})
+target_link_directories(qtmiditrans PRIVATE ${JACK_LIBRARY_DIRS})
 
 # qt_add_translations (Qt >= 6.2):
 #   - creates an "update_translations" target that runs lupdate on the listed sources

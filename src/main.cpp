@@ -31,7 +31,6 @@
 
 #include <jack/jack.h>
 #include <jack/types.h>
-#include <jack/session.h>
 #include <jack/transport.h>
 #include <jack/midiport.h>
 
@@ -166,25 +165,6 @@ int qtmidi_process(jack_nframes_t nframes, void *arg)
   return 0;
 }
 
-void qtmidi_session_callback(jack_session_event_t *event, void *arg)
-{
-  std::stringstream retval;
-
-  qDebug() << "DEBUG: session notification";
-  qDebug() << "path " << event->session_dir << ", uuid " << event->client_uuid << ", type: " << (event->type == JackSessionSave ? "save" : "quit");
-  
-  // Build the command line
-  retval.str("");
-  retval << "qtmidi " << event->client_uuid;
-  event->command_line = strdup(retval.str().c_str());
-  
-  jack_session_reply(client, event);
-  
-  if (event->type==JackSessionSaveAndQuit) qtmidi_quit = 1;
-  
-  jack_session_event_free(event);
-}
-
 void jack_shutdown(void *arg)
 {
   exit(1);
@@ -198,8 +178,7 @@ int main(int argc, char * argv[])
   jack_status_t status;
 
 #ifdef ENABLE_JACK
-  if (argc==1)        client = jack_client_open(client_name, JackNullOption, &status);
-  else if (argc == 2) client = jack_client_open(client_name, JackSessionID, &status, argv[1]);
+  client = jack_client_open(client_name, JackNullOption, &status);
   
   if (client == NULL) 
     {
@@ -241,7 +220,10 @@ int main(int argc, char * argv[])
   app.setStyle("fusion");
  
   QTranslator qtTranslator;
-  qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+  if (qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+    {
+      qWarning() << "Failed to load Qt translations";
+    }
   app.installTranslator(&qtTranslator);
 
   QTranslator myappTranslator;
@@ -261,9 +243,6 @@ int main(int argc, char * argv[])
 #ifdef ENABLE_JACK
   /* Tell the JACK server that we are ready to roll.  Our process() callback will start running now. */
   jack_set_process_callback(client, qtmidi_process, (void *)mainMidi);
-
-  /* tell the JACK server to call `session_callback()' if the session is saved. */
-  jack_set_session_callback(client, qtmidi_session_callback, NULL);
 
   /* register the midi input port */
   port = jack_port_register(client, "input", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0);
